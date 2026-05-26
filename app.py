@@ -4,17 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # 1. 페이지 레이아웃 및 스타일 테마 주입
-st.set_page_config(page_title="메타인지 & 한계효용 학습 최적화", layout="wide")
+st.set_page_config(page_title="메타인지 및 한계효용 학습 최적화", layout="wide")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght=400;600;800&display=swap');
     html, body, [data-testid="stAppViewContainer"] {
         font-family: 'Pretendard', sans-serif;
         background-color: #F1F5F9;
     }
     
-    /* 7) 창의적 헤더 디자인: 네온 포인트 슬레이트 패널 */
+    /* 창의적 헤더 디자인: 네온 포인트 슬레이트 패널 */
     .premium-header {
         background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
         padding: 2.2rem;
@@ -25,7 +25,7 @@ st.markdown("""
         border-bottom: 4px solid #6366F1;
     }
     
-    /* 1) 30524 정서영 뒤 연구원 제거 및 깔끔한 배지화 */
+    /* 사용자 배지화 */
     .user-badge {
         background: rgba(255, 255, 255, 0.1);
         padding: 0.5rem 1.2rem;
@@ -61,7 +61,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================================
-# 1) 상단 프로필 영역 리뉴얼 (연구원 글자 제거)
+# 상단 프로필 영역 (연구원 글자 제거)
 # =========================================================================
 st.markdown("""
     <div class="premium-header">
@@ -69,10 +69,10 @@ st.markdown("""
             <tr style="background:none;">
                 <td style="border:none; padding:0;">
                     <span style="color:#818CF8; font-weight:600; font-size:0.95rem; letter-spacing:1px;">META-COGNITIVE AI PLATFORM</span>
-                    <h1 style="color:white; margin:0.2rem 0 0 0; font-size:2.1rem; font-weight:800;">🧠 메타인지 최적화 알고리즘 대시보드</h1>
+                    <h1 style="color:white; margin:0.2rem 0 0 0; font-size:2.1rem; font-weight:800;">메타인지 최적화 알고리즘 대시보드</h1>
                 </td>
                 <td style="border:none; text-align:right; vertical-align:middle; padding:0;">
-                    <div class="user-badge">👤 30524 정서영</div>
+                    <div class="user-badge">30524 정서영</div>
                 </td>
             </tr>
         </table>
@@ -80,7 +80,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =========================================================================
-# 3) 단원 데이터베이스 고도화 (물리학 I, 지구과학 I 전과정 확장)
+# 단원 데이터베이스 고도화 (물리학 I, 지구과학 I 전과정 확장)
 # =========================================================================
 if 'db_extended' not in st.session_state:
     st.session_state.db_extended = {
@@ -132,14 +132,14 @@ quiz_bank = {
 }
 
 # 기본 탭 레이아웃 생성
-tabs = st.tabs(["📝 01. 단원별 진단 문항 테스트", "📊 02. 메타인지 현황 분석", "🚀 03. 한계효용 최적 학습 경로"])
+tabs = st.tabs(["01. 단원별 진단 문항 테스트", "02. 메타인지 현황 분석", "03. 한계효용 최적 학습 경로"])
 
 # =========================================================================
-# 2) & 4) [탭 1] 단원별 진단 문항 테스트 및 실시간 자동 채점
+# [탭 1] 단원별 진단 문항 테스트 및 실시간 자동 채점
 # =========================================================================
 with tabs[0]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("<h3>📝 01. 단원별 객관식 진단 문항 테스트</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>01. 단원별 객관식 진단 문항 테스트</h3>", unsafe_allow_html=True)
     
     c_sub, c_big, c_small = st.columns(3)
     sub_sel = c_sub.selectbox("과목 선택", list(st.session_state.db_extended.keys()))
@@ -151,7 +151,7 @@ with tabs[0]:
     st.markdown("---")
     
     if small_sel in quiz_bank:
-        st.markdown(f"#### 🎯 진단 단원: <span class='text-neon'>{sub_sel} [{big_sel} - {small_sel}]</span>", unsafe_allow_html=True)
+        st.markdown(f"#### 진단 단원: <span class='text-neon'>{sub_sel} [{big_sel} - {small_sel}]</span>", unsafe_allow_html=True)
         
         user_answers = []
         for i, q_data in enumerate(quiz_bank[small_sel]):
@@ -159,24 +159,21 @@ with tabs[0]:
             ans = st.radio("보기 선택", q_data['o'], key=f"quiz_{small_sel}_{i}", horizontal=True)
             user_answers.append(q_data['o'].index(ans) + 1)
             
-        # 4) 채점 및 정답 확인 버튼
-        if st.button("✏️ 답안 제출 및 실시간 채점", use_container_width=True):
-            # 정답 매칭 알고리즘
+        # 채점 및 정답 확인 버튼
+        if st.button("답안 제출 및 실시간 채점", use_container_width=True):
             target_list = st.session_state.db_extended[sub_sel][big_sel]
             for item in target_list:
                 if item["소단원"] == small_sel:
                     correct_ans = item["정답"]
                     score = 0
                     for u_a, c_a in zip(user_answers, correct_ans):
-                        if u_a == c_a: score += 50 # 2문항 기준 문항당 50점
+                        if u_a == c_a: score += 50
                     
-                    # 5) 결과를 세션 상태에 즉시 자동 반영
                     item["실제"] = score
                     item["푼횟수"] += 1
-                    st.success(f"🎉 채점이 완료되었습니다! 취득 점수: {score}점 / 100점")
+                    st.success(f"채점이 완료되었습니다! 취득 점수: {score}점 / 100점")
             
-            # 해설 상자 오픈
-            with st.expander("🔍 정답 및 해설 펼치기"):
+            with st.expander("정답 및 해설 펼치기"):
                 for idx, q_data in enumerate(quiz_bank[small_sel]):
                     correct_idx = [item["정답"] for item in st.session_state.db_extended[sub_sel][big_sel] if item["소단원"] == small_sel][0][idx]
                     st.write(f"**문제 {idx+1} 정답:** {correct_idx}번 | {q_data['o'][correct_idx-1]}")
@@ -187,54 +184,50 @@ with tabs[0]:
 
 
 # =========================================================================
-# 5) [탭 2] 메타인지 현황 분석 (학생은 예상 점수만 입력)
+# [탭 2] 메타인지 현황 분석 (학생은 예상 점수만 입력)
 # =========================================================================
 with tabs[1]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("<h3>📊 02. 실시간 채점 연동형 메타인지 분석</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>02. 실시간 채점 연동형 메타인지 분석</h3>", unsafe_allow_html=True)
     st.write("1단계에서 채점된 실제 점수가 자동으로 연동됩니다. 학생은 본인이 생각한 **'예상 점수'만 슬라이더로 조절**하세요.")
     
     flat_data = []
     
-    # 데이터 구조 전개 및 수정 폼
     with st.form("metacognition_form"):
         for sub, bigs in st.session_state.db_extended.items():
-            st.markdown(f"#### 📘 {sub}")
+            st.markdown(f"#### {sub}")
             for big, smalls in bigs.items():
                 for item in smalls:
                     col_info, col_slider = st.columns([2, 2])
                     with col_info:
-                        st.markdown(f"**{big} ➔ {item['소단원']}**")
-                        # 5) 자동 채점 연동 상태 시각화
+                        st.markdown(f"**{big} - {item['소단원']}**")
                         if item["푼횟수"] > 0:
-                            st.markdown(f"🔴 채점 완료 연동 점수: **{item['실제']}점**")
+                            st.markdown(f"채점 완료 연동 점수: **{item['실제']}점**")
                         else:
-                            st.caption("⚠️ 아직 테스트를 보지 않아 기본값(0점)으로 세팅되어 있습니다.")
+                            st.caption("아직 테스트를 보지 않아 기본값(0점)으로 세팅되어 있습니다.")
                     with col_slider:
                         pred_val = st.slider("내 예상 주관점수", 0, 100, int(item['예상']), key=f"edit_pred_{sub}_{item['소단원']}")
                         item['예상'] = pred_val
                     flat_data.append({"과목": sub, "단원": item['소단원'], "예상": item['예상'], "실제": item['실제'], "시간": item['시간']})
             st.markdown("<div style='border-bottom: 1px dashed #CBD5E1; margin:1rem 0;'></div>", unsafe_allow_html=True)
             
-        sync_click = st.form_submit_button("📈 주관적 예상 점수 확정 및 시각화 리포트 생성", use_container_width=True)
+        sync_click = st.form_submit_button("주관적 예상 점수 확정 및 시각화 리포트 생성", use_container_width=True)
         
-    # 가공 및 정렬
     df_extended = pd.DataFrame(flat_data)
     df_extended['Gap'] = df_extended['예상'] - df_extended['실제']
     
     def type_classifier(row):
-        if abs(row['Gap']) <= 15: return "🎯 균형 (메타인지 우수)"
-        elif row['Gap'] > 15: return "🚨 과대평가 (인지 착각)"
-        else: return "💎 과소평가 (실력 숨김)"
+        if abs(row['Gap']) <= 15: return "균형 (메타인지 우수)"
+        elif row['Gap'] > 15: return "과대평가 (인지 착각)"
+        else: return "과소평가 (실력 숨김)"
     df_extended['유형'] = df_extended.apply(type_classifier, axis=1)
     
-    # 리포트 출력
     col_t, col_g = st.columns([5, 4])
     with col_t:
-        st.markdown("##### 📝 실시간 메타인지 정량 스코어보드")
+        st.markdown("##### 실시간 메타인지 정량 스코어보드")
         st.dataframe(df_extended[['과목', '단원', '예상', '실제', 'Gap', '유형']], use_container_width=True, hide_index=True)
     with col_g:
-        st.markdown("##### 📈 종합 4분면 메타인지 매핑 공간")
+        st.markdown("##### 종합 4분면 메타인지 매핑 공간")
         fig, ax = plt.subplots(figsize=(6, 4.5))
         ax.set_facecolor('#F8FAFC')
         ax.axhline(50, color='#94A3B8', linestyle='--', alpha=0.5)
@@ -255,33 +248,31 @@ with tabs[1]:
 
 
 # =========================================================================
-# 6) [탭 3] 한계효용 기반 최적화 및 내장형 가상 디지털 교과서 구현
+# [탭 3] 한계효용 기반 최적화 및 내장형 가상 디지털 교과서 구현
 # =========================================================================
 with tabs[2]:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown("<h3>🚀 03. 한계효용(MU) 기반 최적 최적화 스케줄링 리포트</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>03. 한계효용(MU) 기반 최적 최적화 스케줄링 리포트</h3>", unsafe_allow_html=True)
     
     df_extended['잠재효용'] = 100 - df_extended['실제']
     df_extended['한계효용(MU)'] = df_extended['잠재효용'] / df_extended['시간']
     final_path = df_extended.sort_values(by='한계효용(MU)', ascending=False).reset_index(drop=True)
     
     for idx, row in final_path.iterrows():
-        with st.expander(f"🏅 우선순위 {idx+1}위 ➔ {row['과목']} : {row['단원']} (1분 투자당 효율지표: {row['한계효용(MU)']:.2f})"):
+        with st.expander(f"우선순위 {idx+1}위 -> {row['과목']} : {row['단원']} (1분 투자당 효율지표: {row['한계효용(MU)']:.2f})"):
             c_desc, c_widget = st.columns([3, 1])
             with c_desc:
                 st.markdown(f"**현재 격차 분석:** 1단계 테스트 결과 실제 획득 점수가 **{row['실제']}점**이므로, 공부 시 최대 **{row['잠재효용']}점**의 추가 점수를 즉시 회수할 수 있습니다.")
                 st.markdown(f"**시간 효율 소견:** 해당 개념의 EBSi 추천 개념 압축 강의 러닝타임은 총 **{row['시간']}분**으로, 매우 컴팩트하게 구성되어 최적 배정 순위 상위에 랭크되었습니다.")
                 
-                # 6) 임의로 제작한 내장 가상 온라인 교과서 컴포넌트 설계
                 st.markdown("---")
-                st.markdown("##### 📖 6) 정서영의 하이퍼 디지털 온라인 교과서 (가상 빌드 패널)")
+                st.markdown("##### 06. 정서영의 하이퍼 디지털 온라인 교과서 (가상 빌드 패널)")
                 
-                # 교과서 내용 분기 처리
                 textbook_content = ""
                 if row['단원'] == "뉴턴 운동 법칙":
                     textbook_content = "■ 제1법칙(관성): 외력이 없으면 정지 물체는 정지, 운동 물체는 등속도 운동 유지.\n■ 제2법칙(가속도): F=ma. 가속도는 힘에 비례하고 질량에 반비례.\n■ 제3법칙(작용 반작용): A가 B에 힘을 가하면, B도 A에 크기가 같고 방향이 반대인 힘을 동시에 가함."
                 elif row['단원'] == "운동량과 충격량":
-                    textbook_content = "■ 운동량(p): 질량(m) × 속도(v). 방향은 속도의 방향과 일치.\n■ 충격량(I): 힘(F) × 시간(t) = 운동량의 변화량(Δp).\n■ 충돌 시간을 길게 하면(에어백, 포수 글러브 등) 평균 충격력이 감소하여 파손을 막을 수 있음."
+                    textbook_content = "■ 운동량(p): 질량(m) × 속도(v). 방향은 속도의 방향과 일치.\n■ 충격량(I): 힘(F) × 시간(t) = 운동량의 변화량(Delta p).\n■ 충돌 시간을 길게 하면(에어백, 포수 글러브 등) 평균 충격력이 감소하여 파손을 막을 수 있음."
                 else:
                     textbook_content = f"■ [{row['단원']}] 핵심 요약 정보:\n본 대단원의 구조적 핵심 원리는 교과 핵심 개념서 제24조에 근거합니다. 해당 개념의 정의와 도식화 데이터를 기반으로 메타인지 오답을 영(0)으로 수렴시키는 공식을 암기하세요."
                 
@@ -291,7 +282,6 @@ with tabs[2]:
                 st.metric("투입 자원 (시간 비용)", f"{row['시간']} 분")
                 st.metric("회수 가치 (기대 효용)", f"+{row['잠재효용']} 점")
                 
-                # 아이패드/모바일 환경에서도 안정적으로 새 창을 여는 표준 앵커 태그 스타일로 변경
                 st.markdown(f"""
                     <a href="https://www.ebsi.co.kr" target="_blank" style="text-decoration: none;">
                         <div style="
@@ -304,8 +294,8 @@ with tabs[2]:
                             text-align: center;
                             box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
                         ">
-                            📺 EBSi 인강 연결
+                            EBSi 인강 연결
                         </div>
                     </a>
                 """, unsafe_allow_html=True)
-                
+    st.markdown('</div>', unsafe_allow_html=True)
